@@ -1,6 +1,6 @@
 ﻿<#@ template debug="false" hostspecific="true" language="C#" #>
 <#@ assembly name="System.Core" #>
-<#@ include file="$(SolutionDir)\Packages\T4.TemplateFileManager.2.1.1\tools\ttinc\TemplateFilemanager.CS.ttinclude" #>
+<#@ include file="$(SolutionDir)\Packages\T4.TemplateFileManager.2.1.2\tools\ttinc\TemplateFilemanager.CS.ttinclude" #>
 <#@ output extension=".txt" #>
 
 <# 

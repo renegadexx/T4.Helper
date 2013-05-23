@@ -1,0 +1,15 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ include file="$(SolutionDir)\T4.TemplateFileManager\TemplateFileManager.cs.ttinclude" #>
+<#@ output extension=".cs" #>
+<#
+var manager = TemplateFileManager.Create(this);
+#>
+	// code inserted here will be written to the output SampleTemplate.cs file...
+<#
+manager.StartNewFile("GeneratedFile");
+#>
+	// code inserted here will be written to the output GeneratedFile.cs file...
+<#
+manager.Process();
+#>

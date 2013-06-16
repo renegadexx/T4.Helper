@@ -13,3 +13,5 @@ You can use the T4.TemplateFileManager via nuget if you run the following comman
 
 
 ### Limitations
+- Only one instance of the T4.TemplateFileManager can be used per Template
+- Projects and folders, where you place the output files, will not created automatically

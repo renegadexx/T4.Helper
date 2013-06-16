@@ -895,13 +895,11 @@ public class VSHelper
 		}
 		else if (prj != null && String.IsNullOrEmpty(block.FolderName) == false)
 		{
-			item = GetAllProjectItemsRecursive(prj.ProjectItems).Where(i=>i.Name == block.FolderName).First();
+			item = FindFolderByName(prj.ProjectItems, block.FolderName);
 		}
 		else if (String.IsNullOrEmpty(block.FolderName) == false)
 		{
-			item = GetAllProjectItemsRecursive(
-				dte.ActiveDocument.ProjectItem.ContainingProject.ProjectItems).
-				Where(i=>i.Name == block.FolderName).First();
+			item = FindFolderByName(dte.ActiveDocument.ProjectItem.ContainingProject.ProjectItems, block.FolderName);
 		}
 		
 		if (item != null)
@@ -911,6 +909,41 @@ public class VSHelper
 		
 		return defaultPath;
 	}
+
+	public static EnvDTE.ProjectItem FindFolderByName(EnvDTE.ProjectItems inItems, string withName)
+    {
+		var folders = withName.Split(new char[] {'.', '/', '\\'});
+		var lastFolder = folders[folders.Length - 1];
+
+		if (folders.Length == 1)
+        {
+			var items = GetAllProjectItemsRecursive(inItems).Where(p => p.Name == withName);
+
+			if (items.Count() == 1)
+				return items.First();
+
+			foreach (EnvDTE.ProjectItem r in items)
+            {
+				if (r.Collection.Parent is EnvDTE.Project)
+					return r;
+            }
+
+			return items.First();
+        }
+
+		EnvDTE.ProjectItem item = GetAllProjectItemsRecursive(inItems).Where(p => p.Name == folders[0]).First();
+
+        for (int idx = 1; idx < folders.Length; idx++)
+        {
+			item = item.ProjectItems.Cast<ProjectItem>().Where(i=>i.Name == folders[idx]).FirstOrDefault();
+
+			if (item == null)
+				throw new ArgumentException(folders[idx] + " not found in path " + withName);
+        }
+
+		return item;
+    } 
+
 	public static string GetTemplatePlaceholderName(EnvDTE.ProjectItem item)
 	{
 		return String.Format("{0}.txt4", Path.GetFileNameWithoutExtension(item.Name));
@@ -944,9 +977,7 @@ public class VSHelper
 		}
 		else if (String.IsNullOrEmpty(file.FolderName) == false)
 		{
-			item = GetAllProjectItemsRecursive(
-				dte.ActiveDocument.ProjectItem.ContainingProject.ProjectItems).
-				Where(i=>i.Name == file.FolderName).First();
+			item = FindFolderByName(dte.ActiveDocument.ProjectItem.ContainingProject.ProjectItems, file.FolderName);
 		}
 		
 		if (item != null)

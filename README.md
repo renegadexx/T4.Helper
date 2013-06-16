@@ -7,7 +7,7 @@ Usually it is sufficient when transforming a T4 Template “example.tt” result
 - Creating a server and a client component based on a common model
 - Distribute generated code to multiple projects within a solution
 
-You can use the T4.TemplateFileManager via nuget if you run the following command in the Package Manager Console in Visual Studio:
+You can use the [T4.TemplateFileManager](http://nuget.org/packages/T4.TemplateFileManager) via nuget if you run the following command in the Package Manager Console in Visual Studio:
 
 `PM> Install-Package T4.TemplateFileManager`
 

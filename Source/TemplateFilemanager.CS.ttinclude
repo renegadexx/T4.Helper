@@ -899,6 +899,9 @@ public class VSHelper
 		}
 		else if (String.IsNullOrEmpty(block.FolderName) == false)
 		{
+			if (dte.ActiveDocument == null)
+				throw new Exception(
+				"ActiveDocument is not available. Please run this template when any file is opened and active in VS.");
 			item = FindFolderByName(dte.ActiveDocument.ProjectItem.ContainingProject.ProjectItems, block.FolderName);
 		}
 		
@@ -931,18 +934,29 @@ public class VSHelper
 			return items.First();
         }
 
-		EnvDTE.ProjectItem item = GetAllProjectItemsRecursive(inItems).Where(p => p.Name == folders[0]).First();
-
-        for (int idx = 1; idx < folders.Length; idx++)
-        {
-			item = item.ProjectItems.Cast<ProjectItem>().Where(i=>i.Name == folders[idx]).FirstOrDefault();
-
-			if (item == null)
-				throw new ArgumentException(folders[idx] + " not found in path " + withName);
-        }
+		var startItemEnumerator = GetAllProjectItemsRecursive(inItems).Where(p => p.Name == folders[0])
+			.Cast<ProjectItem>().GetEnumerator();
+		EnvDTE.ProjectItem item = null;
+		int idx = 1;
+		string joinedNames = string.Empty;
+		while (startItemEnumerator.MoveNext())
+		{
+			item = startItemEnumerator.Current;
+			for (idx = 1; idx < folders.Length; idx++)
+			{
+				joinedNames = string.Join(", ", item.ProjectItems.Cast<ProjectItem>().Select(i=>i.Name));
+				item = item.ProjectItems.Cast<ProjectItem>().Where(i=>i.Name == folders[idx]).FirstOrDefault();
+				if (item == null)
+					break;
+			}
+			if (item != null)
+				break;
+		}
+		if (item == null)
+			throw new ArgumentException(folders[idx] + " not found in path " + withName + " among " + joinedNames);
 
 		return item;
-    } 
+	}
 
 	public static string GetTemplatePlaceholderName(EnvDTE.ProjectItem item)
 	{

@@ -901,7 +901,7 @@ public class VSHelper
 		{
 			if (dte.ActiveDocument == null)
 				throw new Exception(
-				"ActiveDocument is not available. Please run this template when any file is opened and active in VS.");
+					"ActiveDocument is not available. Please run this template when any project file is open and active in VS.");
 			item = FindFolderByName(dte.ActiveDocument.ProjectItem.ContainingProject.ProjectItems, block.FolderName);
 		}
 		
@@ -914,43 +914,41 @@ public class VSHelper
 	}
 
 	public static EnvDTE.ProjectItem FindFolderByName(EnvDTE.ProjectItems inItems, string withName)
-    {
+	{
 		var folders = withName.Split(new char[] {'.', '/', '\\'});
-		var lastFolder = folders[folders.Length - 1];
 
 		if (folders.Length == 1)
-        {
+		{
 			var items = GetAllProjectItemsRecursive(inItems).Where(p => p.Name == withName);
 
 			if (items.Count() == 1)
 				return items.First();
 
 			foreach (EnvDTE.ProjectItem r in items)
-            {
+			{
 				if (r.Collection.Parent is EnvDTE.Project)
 					return r;
-            }
+			}
 
 			return items.First();
-        }
+		}
 
 		var startItemEnumerator = GetAllProjectItemsRecursive(inItems).Where(p => p.Name == folders[0])
 			.Cast<ProjectItem>().GetEnumerator();
 		EnvDTE.ProjectItem item = null;
 		int idx = 1;
 		string joinedNames = string.Empty;
-		while (startItemEnumerator.MoveNext())
+		while (startItemEnumerator.MoveNext() && item == null)
 		{
 			item = startItemEnumerator.Current;
 			for (idx = 1; idx < folders.Length; idx++)
 			{
-				joinedNames = string.Join(", ", item.ProjectItems.Cast<ProjectItem>().Select(i=>i.Name));
-				item = item.ProjectItems.Cast<ProjectItem>().Where(i=>i.Name == folders[idx]).FirstOrDefault();
+				var subItems = item.ProjectItems.Cast<ProjectItem>();
+				joinedNames = string.Join(", ", subItems.Select(i => i.Name));
+				item = subItems.Where(i => i.Name == folders[idx]).FirstOrDefault();
 				if (item == null)
 					break;
 			}
-			if (item != null)
-				break;
 		}
 		if (item == null)
 			throw new ArgumentException(folders[idx] + " not found in path " + withName + " among " + joinedNames);

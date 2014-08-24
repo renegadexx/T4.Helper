@@ -39,6 +39,8 @@
 The TemplateFileManager is based on EntityFrameworkTemplateFileManager (EFTFM) from MS.
 
 Differences to EFTFM
+Version 2.1.3
+- Bugfix Exception when solution contains database-projects
 Version 2.1.2
 - Bugfix Exception when solution contains wix-projects, reported by jturner
 Version 2.1:
@@ -1052,6 +1054,9 @@ public class VSHelper
 	public static string GetProjectItemFullPath(EnvDTE.ProjectItem item)
 	{
 		if (item == null)
+			return null;
+
+		if (item.Properties == null)
 			return null;
 
 		return item.Properties.Item("FullPath").Value.ToString();

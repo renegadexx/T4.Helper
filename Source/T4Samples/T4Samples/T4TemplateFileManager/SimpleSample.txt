@@ -1,0 +1,21 @@
+﻿
+
+// <summary file="$filename$" company="...">
+// some text...
+// </summary>
+
+//-> SimpleClass1.cs
+
+//-> SimpleClass2.cs
+
+//-> SimpleClass3.cs
+
+//-> SimpleClass4.cs
+// Generated helper templates
+// T4Samples\T4Samples\TestFolder\Sub\SimpleSample.txt4
+// Generated items
+// T4Samples\T4Samples\TestFolder\Sub\SimpleClass4.cs
+// T4Samples\T4Samples\TestFolder\Sub\SimpleClass3.cs
+// T4Samples\T4Samples\TestFolder\Sub\SimpleClass2.cs
+// T4Samples\T4Samples\TestFolder\Sub\SimpleClass1.cs
+

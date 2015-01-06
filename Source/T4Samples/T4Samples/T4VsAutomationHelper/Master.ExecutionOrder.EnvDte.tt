@@ -1,0 +1,45 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".txt" #>
+<#@ include file="$(SolutionDir)\Packages\T4.VsAutomationHelper.1.0.0\tools\ttinc\VsAutomationHelper.CS.ttinclude" #>
+<#@ import namespace="EnvDTE" #>
+
+
+<#
+	// Demo: t4 exeution order with EnvDte 
+	var items = this.dteHelper.GetAllProjectItems().ToList();
+
+	// for complex hierachies scenarios
+	//var allItems = this.dteHelper.GetAllProjectItemsRecursive(items);
+	
+	var list = new List<ProjectItem>() 
+    {
+		GetTemplateItem(items, "01_template.tt"),
+		GetTemplateItem(items, "02_template.tt")
+    };
+	list.ForEach(i => SaveItem(i));
+
+#>
+
+<#+ 
+public ProjectItem GetTemplateItem(IEnumerable<ProjectItem> items, string name)
+{
+	return items.Where(d => d.Properties.Item("FullPath").Value.ToString().EndsWith(name))
+		.FirstOrDefault();
+}
+
+public void SaveItem(ProjectItem itm)
+{
+	// required by VS
+	itm.Open();
+	// execute transform by save template
+	itm.Save();
+	
+	// close the document
+	if (itm.Document != null)
+		itm.Document.Close();
+}
+#>

@@ -1,0 +1,109 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ include file="$(SolutionDir)\Packages\T4.TemplateFileManager.2.1.2\tools\ttinc\TemplateFilemanager.CS.ttinclude" #>
+<#@ output extension=".txt" #>
+
+<# 
+// Recommended editor: Tangible T4 Editor (http://t4-editor.tangible-engineering.com/Download_T4Editor_Plus_ModelingTools.html)
+// after save SimpleSample.tt, the output will be generated in the TestFolder of the project
+var fileProperties = new FileProperties()
+{
+	BuildAction = BuildAction.Compile
+};
+
+var fileManager = TemplateFileManager.Create(this);
+fileManager.IsAutoIndentEnabled = true;
+fileManager.CanOverwriteExistingFile = true;
+
+fileManager.StartHeader();
+#>
+// <summary file="$filename$" company="...">
+// some text...
+// </summary>
+<# 
+fileManager.EndBlock();
+
+var data = this.GetTestDataForSample();
+
+// init handling for parameter templates
+var paramTmpl = ParamTextTemplate.Create(this.Host);
+var session = ParamTextTemplate.GetSessionObject();
+
+foreach (Test item in data)
+{
+	fileManager.StartNewFile(item.ClassName + ".cs", folderName:"TestFolder", fileProperties:fileProperties);
+	session["ClassMetaData"] = item;
+	string output = paramTmpl.TransformText("SimpleParameterTemplate.tt", session);
+	this.Write(output);
+}
+
+fileManager.Process();
+#>
+
+<#+ 
+public IList<Test> GetTestDataForSample()
+{
+	return new List<Test>() 
+	{
+		new Test 
+		{ 
+		  Namespace = "SimpleTest.Namespace", ClassName = "SimpleClass1",
+		  Properties = new List<Property>()
+			{
+				new Property() { ReturnType = "int", PropertyName = "Id" },
+				new Property() { ReturnType = "string", PropertyName = "Name" }
+			}
+		},
+		new Test 
+		{ 
+		  Namespace = "SimpleTest.Namespace", ClassName = "SimpleClass2",
+		  Properties = new List<Property>()
+			{
+				new Property() { ReturnType = "int", PropertyName = "SimpleClass2Id" },
+				new Property() { ReturnType = "string", PropertyName = "Description" }
+			}
+		},
+		new Test 
+		{ 
+		  Namespace = "SimpleTest.Namespace", ClassName = "SimpleClass3",
+		  Properties = new List<Property>()
+			{
+				new Property() { ReturnType = "int", PropertyName = "Id" },
+				new Property() { ReturnType = "string", PropertyName = "Name" }
+			}
+		},
+		new Test 
+		{ 
+		  Namespace = "SimpleTest.Namespace", ClassName = "SimpleClass4",
+		  Properties = new List<Property>()
+			{
+				new Property() { ReturnType = "int", PropertyName = "Id" },
+				new Property() { ReturnType = "string", PropertyName = "Descripition" }
+			}
+		}
+	};
+}
+
+/// <summary>
+/// DTO definitions for parameter template
+/// </summery>
+[Serializable]
+public class Property : MarshalByRefObject
+{
+	public string ReturnType { get; set; }
+	public string PropertyName { get; set; }
+}
+
+[Serializable]
+public class Test : MarshalByRefObject
+{
+	public Test()
+	{
+		this.Properties = new List<Property>();
+	}
+
+	public string Namespace { get; set; }
+	public string ClassName { get; set; }
+	public IList<Property> Properties { get; set; }	
+}
+#>

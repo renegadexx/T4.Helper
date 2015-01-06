@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2BB026C1-94DB-4976-B10A-E9A017545EAE}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>T4Samples</RootNamespace>
+    <AssemblyName>T4Samples</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="TestFolder\Sub\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="T4TemplateFileManager\SimpleParameterTemplate.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>SimpleParameterTemplate.txt</LastGenOutput>
+    </None>
+    <None Include="T4TemplateFileManager\SimpleSample.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>SimpleSample.txt</LastGenOutput>
+    </None>
+    <None Include="T4VsAutomationHelper\01_template.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>01_template1.txt</LastGenOutput>
+    </None>
+    <None Include="T4VsAutomationHelper\02_template.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>02_template1.txt</LastGenOutput>
+    </None>
+    <None Include="T4VsAutomationHelper\Master.ExecutionOrder.EnvDte.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Master.ExecutionOrder.EnvDte1.txt</LastGenOutput>
+    </None>
+    <None Include="T4VsAutomationHelper\VsAutomationHelper.CS.ttinclude" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="T4TemplateFileManager\SimpleParameterTemplate.txt">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SimpleParameterTemplate.tt</DependentUpon>
+    </Content>
+    <Content Include="T4TemplateFileManager\SimpleSample.txt">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SimpleSample.tt</DependentUpon>
+    </Content>
+    <Content Include="T4VsAutomationHelper\01_template1.txt">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>01_template.tt</DependentUpon>
+    </Content>
+    <Content Include="T4VsAutomationHelper\02_template1.txt">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>02_template.tt</DependentUpon>
+    </Content>
+    <Content Include="T4VsAutomationHelper\Master.ExecutionOrder.EnvDte1.txt">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Master.ExecutionOrder.EnvDte.tt</DependentUpon>
+    </Content>
+    <Content Include="TestFolder\ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

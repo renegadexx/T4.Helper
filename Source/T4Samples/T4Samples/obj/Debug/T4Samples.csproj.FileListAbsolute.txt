@@ -1,0 +1,5 @@
+R:\Projects\github\Helper\Source\T4Samples\T4Samples\bin\Debug\T4Samples.dll
+R:\Projects\github\Helper\Source\T4Samples\T4Samples\bin\Debug\T4Samples.pdb
+R:\Projects\github\Helper\Source\T4Samples\T4Samples\obj\Debug\T4Samples.csprojResolveAssemblyReference.cache
+R:\Projects\github\Helper\Source\T4Samples\T4Samples\obj\Debug\T4Samples.dll
+R:\Projects\github\Helper\Source\T4Samples\T4Samples\obj\Debug\T4Samples.pdb

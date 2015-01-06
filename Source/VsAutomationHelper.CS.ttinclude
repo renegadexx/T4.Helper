@@ -1,0 +1,175 @@
+﻿<#@ assembly name="System.Core" #>
+<#@ assembly name="EnvDTE"#>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="Microsoft.VisualStudio.TextTemplating" #>
+<# 
+this.dteHelper = new DteHelper(this.Host);
+#>
+<#+
+public DteHelper dteHelper;
+/// <summary>
+/// Collection of Visual Studio Automation-Helper methods.
+/// (c) renegade 
+/// </summary>
+/// <returns></returns>
+public class DteHelper 
+{
+	public DteHelper(object host)
+	{
+		this.Host = host as ITextTemplatingEngineHost;
+	}
+	
+	public EnvDTE.DTE Dte
+	{
+		get
+		{
+			return this.GetHostServiceProvider();
+		}
+	}
+	
+	private readonly ITextTemplatingEngineHost Host;
+	
+	/// Functions requires hostspecific true
+	/// <summary>
+	/// Gets the solution name of the project.
+	/// </summary>
+	public string GetSolutionName()
+	{
+		EnvDTE.DTE dte = GetHostServiceProvider();
+		return System.IO.Path.GetFileNameWithoutExtension(dte.Solution.FullName);
+	}
+
+	public IEnumerable<EnvDTE.ProjectItem> GetAllProjectItems()
+	{
+		EnvDTE.DTE dte = GetHostServiceProvider();
+		return this.GetAllProjectItemsRecursive(this.GetTemplateAsProjectItem(dte).ContainingProject.ProjectItems);
+	}
+	
+    public IEnumerable<EnvDTE.ProjectItem> GetAllProjectItemsRecursive(EnvDTE.ProjectItems projectItems) 
+	{
+    	foreach (EnvDTE.ProjectItem projectItem in projectItems) 
+		{
+        	foreach (EnvDTE.ProjectItem subItem in GetAllProjectItemsRecursive(projectItem.ProjectItems))
+        	{
+            	yield return subItem;
+        	}
+
+        	yield return projectItem;
+    	}
+	}
+	
+	public string GetProjectItemFullPath(EnvDTE.ProjectItem item)
+	{
+		return item.Properties.Item("FullPath").Value.ToString();
+	}
+	
+	/// <summary
+	/// Gets the project name of the active template file.
+	/// </summary>
+	public string GetCurrentProjectName()
+	{
+		EnvDTE.DTE dte = GetHostServiceProvider();
+		return dte.ActiveDocument.ProjectItem.ContainingProject.Name;
+	}
+
+	/// <summary>
+	/// Sets the custom tool for generated item.
+	/// <param name="generatedFilename">Filename of the generated item</param>
+	/// <param name="customToolName">The name of the custom tool.</param>
+	/// <example>
+	/// 	SetCustomToolForGeneratedItem("Resource.resx", "ResXFileCodeGenerator");
+	/// </example>
+	/// </summary>
+	public void SetCustomToolForGeneratedItem(string generatedFilename, string customToolName)
+	{
+		EnvDTE.DTE dte = GetHostServiceProvider();
+		EnvDTE.ProjectItem subItem = GetTemplateAsProjectItem(dte).
+			ProjectItems.Cast<EnvDTE.ProjectItem>().Where(p=>p.Name == generatedFilename).First();
+		
+		SetPropertyValue(subItem, "CustomTool", customToolName);
+	}
+
+	/// <summary>
+	/// Sets the custom tool for the first generated item.
+	/// <param name="customToolName">The name of the custom tool.</param>
+	/// <example>
+	/// 	SetCustomToolForFirstGeneratedItem("ResXFileCodeGenerator");
+	/// </example>
+	/// </summary>
+	public void SetCustomToolForFirstGeneratedItem(string customToolName)
+	{
+		EnvDTE.DTE dte = GetHostServiceProvider();
+		EnvDTE.ProjectItem firstSubItem = GetTemplateAsProjectItem(dte).
+			ProjectItems.Cast<EnvDTE.ProjectItem>().First();
+
+		SetPropertyValue(firstSubItem, "CustomTool", customToolName);
+	}
+
+	/// <summary>
+	/// Sets a property value for the project item.
+	/// </summary>
+	public void SetPropertyValue(EnvDTE.ProjectItem item, string propertyName, object value)
+	{
+		EnvDTE.Property property = item.Properties.Item(propertyName);
+		if (property == null)
+		{
+			throw new ArgumentException(String.Format("The property {0} was not found.", propertyName));
+		}
+		else
+		{
+			property.Value = value;
+		}
+	}
+
+	/// <summary>
+	/// Gets the T4 template as vs projectitem.
+	/// </summary>
+	public EnvDTE.ProjectItem GetTemplateAsProjectItem(EnvDTE.DTE dte)
+	{
+		return dte.Solution.FindProjectItem(this.Host.TemplateFile);
+	}
+
+	/// <summary>
+	/// Adds a missing file to the t4 vs projectitem.
+	/// </summary>
+	public void AddMissingFileToProject(
+			EnvDTE.ProjectItem pItem, string fileName)
+	{
+		var isMissing = (from itm in pItem.ProjectItems.Cast<EnvDTE.ProjectItem>()
+			where itm.Name == fileName
+			select itm).Count() == 0;
+
+		if (isMissing)
+			pItem.ProjectItems.AddFromFile(GetPath(fileName));	
+	}
+
+	/// <summary>
+	/// Gets the vs automation object EnvDTE.DTE.
+	/// </summary>
+	public EnvDTE.DTE GetHostServiceProvider()
+	{
+		var hostServiceProvider = Host as IServiceProvider;
+		EnvDTE.DTE dte = null;
+		if (hostServiceProvider != null)
+		{
+			dte = hostServiceProvider.
+				GetService(typeof(EnvDTE.DTE)) as EnvDTE.DTE;
+		}
+
+		return dte;
+	}
+	
+	/// <summary>
+	/// Gets the full path of the file.
+	/// </summary>
+	public string GetPath(string fileName)
+	{
+		string templateDirectory = Path.GetDirectoryName(
+				Host.TemplateFile);
+		return Path.Combine(templateDirectory, fileName);
+	}		
+}
+#>

@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>T4.VsAutomationHelper</id>
+    <version>1.0.0</version>
+    <authors>Rene Leupold</authors>
+    <owners>Rene Leupold</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Visual Studio Automation Helper for T4, that enables access to the EnvDTE and FSO.
+	Please report bugs or feature requests on github: https://github.com/renegadexx/T4.Helper/issues.</description>
+    <releaseNotes />
+    <copyright>Copyright 2011-2015</copyright>
+    <tags>T4 CodeGeneration C# EnvDTE FSO TemplateFileManager dsl</tags>
+  </metadata>
+</package>

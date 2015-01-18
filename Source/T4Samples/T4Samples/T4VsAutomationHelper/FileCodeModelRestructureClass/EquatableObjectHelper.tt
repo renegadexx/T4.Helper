@@ -1,0 +1,173 @@
+﻿2<#@ template  debug="true" hostSpecific="true" #>
+<#@ output extension=".cs" #>
+<#@ assembly name="EnvDTE80.dll" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="EnvDTE" #>
+<#@ import namespace="EnvDTE80" #>
+<#@ include file="VsAutomationHelper.CS.ttinclude" #>
+<#@ include file="EF.Utility.CS.ttinclude" #>
+<#
+EnvDTE.DTE dte =  dteHelper.GetHostServiceProvider();
+EntityFrameworkTemplateFileManager fm = EntityFrameworkTemplateFileManager.Create(this);
+fm.StartHeader();
+this.WriteLine("/// meine kopfzeile für alle klassen");
+fm.EndBlock();
+
+
+
+
+EnvDTE.Project project = dte.Solution.Item(2);
+
+ProjectItem item =  (from ProjectItem it in project.ProjectItems.Cast<ProjectItem>()
+						from ProjectItem si in it.ProjectItems.Cast<ProjectItem>()
+								where si.Name == "SampleClasses"
+							select si).First();
+								
+List<ProjectItem> projectItems = item.ProjectItems.Cast<ProjectItem>().ToList();
+								
+foreach (ProjectItem projectItem in projectItems)
+{
+	EnvDTE.FileCodeModel model = projectItem.FileCodeModel;
+	CodeElements elements = model.CodeElements;
+		
+	CodeClass classObject = (from CodeElement ns in elements.OfType<EnvDTE.CodeNamespace>()
+							from CodeElement cls in ns.Children.OfType<CodeClass>()
+							select cls).FirstOrDefault() as CodeClass;
+	if (classObject == null) continue;
+	
+	fm.StartNewFile(String.Format("{0}.Equatable.cs", classObject.Name));
+	this.GeneratePartialCodeClass(classObject);
+}						
+
+fm.Process(true);
+#>
+
+<#+ 
+private void GeneratePartialCodeClass(CodeClass element)
+{ 
+	EnvDTE80.CodeClass2 cls = element as CodeClass2;
+	this.SetAsPartialClass(cls);
+	this.RemoveDeclaredFunction(cls, "GetHashCode");
+	this.RemoveDeclaredFunction(cls, "Equals");
+	this.RemoveDeclaredFunction(cls, "operator");
+	this.GenerateCompareableCodeInPartialClass(cls);
+}
+
+private List<CodeProperty2> GetClassProperties(CodeClass2 cls)
+{
+	return (from CodeProperty2 p in cls.Children.OfType<CodeProperty2>()
+			select p).ToList();
+}
+
+private void GenerateCompareableCodeInPartialClass(CodeClass2 cls)
+{
+#>
+namespace <#= cls.Namespace.Name #>
+{
+	using System;
+	using System.Collections;
+	using System.Collections.Generic;
+	using System.Linq;
+	
+	public partial class <#= cls.Name #>  : IEquatable<<#= cls.Name #>>
+	{
+		public override int GetHashCode()
+		{
+			return this.Id;
+		}
+		
+		public override bool Equals(object obj)
+		{
+			if (obj == null) return base.Equals(obj);
+
+			if (! (obj is <#= cls.Name #>))
+				throw new InvalidCastException("The 'obj' argument is not a <#= cls.Name #> object.");
+			else
+				return this.IsEqualWith(obj as <#= cls.Name #>);
+		}
+		
+		public bool Equals(<#= cls.Name #> other)
+    	{
+      		return this.IsEqualWith(other);
+    	}
+		
+		public static bool operator ==(<#= cls.Name #> obj1, <#= cls.Name #> obj2)
+    	{
+			bool isO1Null = Object.ReferenceEquals(obj1, null);
+			bool isO2Null = Object.ReferenceEquals(obj2, null);
+
+			if (isO1Null && isO2Null) return true;
+			if (isO1Null || isO2Null) return false;
+			
+      		return obj1.Equals(obj2);
+    	}
+
+    	public static bool operator !=(<#= cls.Name #> obj1, <#= cls.Name #> obj2)
+    	{
+			bool isO1Null = Object.ReferenceEquals(obj1, null);
+			bool isO2Null = Object.ReferenceEquals(obj2, null);
+
+			if (isO1Null && isO2Null) return false;
+			if (isO1Null || isO2Null) return true;		
+      		
+			return !obj1.Equals(obj2);
+    	}
+		
+		private bool IsEqualWith(<#= cls.Name #> other)
+		{
+<#+ 
+foreach (CodeProperty2 p in this.GetClassProperties(cls))
+{
+	if (p.Type.AsString.StartsWith("System.Collections") || p.Type.AsString.EndsWith("[]"))
+	{
+#>
+			if (this.<#= p.Name #>.Except(other.<#= p.Name #>).Count() != 
+				other.<#= p.Name #>.Except(this.<#= p.Name #>).Count())
+				return false;
+<#+ 
+	} else {
+#>
+			if (this.<#= p.Name #> != other.<#= p.Name #>)
+				return false;
+
+<#+ 
+	}
+}
+#>
+			
+			return true;
+		}
+	}
+}
+<#+ 
+}
+
+private void SetAsPartialClass(CodeClass2 cls)
+{
+	if (cls.ClassKind != EnvDTE80.vsCMClassKind.vsCMClassKindPartialClass)
+	{
+		cls.ClassKind = EnvDTE80.vsCMClassKind.vsCMClassKindPartialClass;
+	}
+}
+
+private void RemoveDeclaredFunction(CodeClass2 cls, string functionName)
+{
+	var result = from CodeFunction2 f in cls.Children.OfType<CodeFunction2>()
+						where f.Name.StartsWith(functionName)
+						select f;
+
+	if (result == null)
+		return;
+	
+	foreach (CodeFunction2 fn in result)
+	{
+		 cls.RemoveMember(fn);
+	}	
+}
+
+#>

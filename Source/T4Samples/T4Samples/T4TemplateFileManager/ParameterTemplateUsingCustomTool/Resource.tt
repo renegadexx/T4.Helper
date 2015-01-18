@@ -1,0 +1,53 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ output extension=".txt" #>
+<#@ import namespace="Microsoft.VisualStudio.TextTemplating" #>
+<#@ import namespace="ExcelHelper" #>
+<#@ include file="EF.Utility.CS.ttinclude" #>
+<#@ include file="VsAutomationHelper.CS.ttinclude" #>
+<#@ assembly name="C:\tt\ExcelHelper.dll" #>
+<#
+string[] cultureKeyArray = new string[] {"en", "de", "fr", "it"};
+EntityFrameworkTemplateFileManager fm = EntityFrameworkTemplateFileManager.Create(this);
+ResourceSheet sheet = new ExcelHelper.ResourceSheet();
+sheet.Load(@"C:\tt\T4Enhanced.xlsx");
+
+for (int idx = 0; idx < cultureKeyArray.Length; idx++)
+{
+	string key = cultureKeyArray[idx];
+	fm.StartNewFile("Resource" + this.GetResourceExtension(key));
+	this.Write(this.GenerateResourceWithTemplate("ResourceTemplate.tt", key, sheet.Document));
+}
+
+fm.Process(true);
+
+// Enable strong typed resource
+this.dteHelper.SetCustomToolForGeneratedItem("Resource.resx", "ResXFileCodeGenerator");
+#>
+
+<#+ 
+private string GenerateResourceWithTemplate(string nestedTemplateName, string cultureKey, ExcelHelper.ResourceDocument doc)
+{
+	string templateFile = this.Host.ResolvePath(nestedTemplateName);
+	string templateContent = File.ReadAllText(templateFile);
+
+	TextTemplatingSession session = new TextTemplatingSession();
+	session["CultureKey"] = cultureKey;
+	session["Document"] = doc;
+
+	var sessionHost = (ITextTemplatingSessionHost) this.Host;
+	sessionHost.Session = session;
+
+	Engine engine = new Engine();
+	return engine.ProcessTemplate(templateContent, this.Host);
+}
+
+private string GetResourceExtension(string cultureKey)
+{
+	if (cultureKey.ToLower() == "en")
+	{
+		return ".resx";
+	}
+	
+	return String.Format(".{0}.resx", cultureKey.ToLower());
+}
+#>

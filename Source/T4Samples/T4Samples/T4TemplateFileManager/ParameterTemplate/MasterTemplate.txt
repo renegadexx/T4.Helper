@@ -1,0 +1,11 @@
+﻿
+
+
+//-> Person.html
+Error processing file Person.xml Beim Aufruf einer COM-Komponente wurde ein HRESULT E_FAIL-Fehler zurückgegeben.
+//-> Person.xml
+// Generated helper templates
+// Generated items
+// T4Samples\T4Samples\T4TemplateFileManager\ParameterTemplate\Person.xml
+// T4Samples\T4Samples\T4TemplateFileManager\ParameterTemplate\Person.html
+

@@ -1,0 +1,31 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ output extension=".txt" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="Microsoft.CSharp" #>
+<#@ import namespace="System" #>
+<#@ parameter name="ClassMetaData" type="System.Object" #>
+<# 
+if (ClassMetaData != null)
+{
+	// Template used by SimpleSample.tt
+	var classData = ClassMetaData as dynamic;
+#>
+namespace <#= classData.Namespace #>
+{
+	using System;
+
+	public class <#= classData.ClassName #>
+	{
+		<#
+		foreach(dynamic item in classData.Properties)
+		{
+		#>
+		public <#= item.ReturnType #> <#= item.PropertyName #> { get; set; }
+		<#
+		} 
+		#>
+	}
+}
+<#
+}
+#>

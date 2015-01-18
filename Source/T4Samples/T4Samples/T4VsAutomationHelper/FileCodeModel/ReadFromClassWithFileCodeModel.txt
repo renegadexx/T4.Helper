@@ -1,0 +1,7 @@
+﻿ 
+
+CREATE TABLE UseClassForGeneration (
+  Property string,
+  Length int,
+)
+

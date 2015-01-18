@@ -1,14 +1,45 @@
 ﻿<#@ template  debug="true" hostSpecific="true" #>
-<#@ output extension=".cs" #>
+<#@ output extension=".txt" #>
 <#@ Assembly Name="System.Core" #>
-<#@ Assembly Name="System.Windows.Forms" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.IO" #>
 <#@ import namespace="System.Diagnostics" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Collections" #>
 <#@ import namespace="System.Collections.Generic" #> 
+<#@ include file="$(SolutionDir)\Packages\T4.VsAutomationHelper.1.0.0\tools\ttinc\VsAutomationHelper.CS.ttinclude" #>
+<#@ import namespace="EnvDTE" #>
 <#
 
+	var projectItems = this.dteHelper.GetAllProjectItems();
+	var classItem = this.GetTemplateItem(projectItems, "UseClassForGeneration.cs");
+	EnvDTE.FileCodeModel model = classItem.FileCodeModel;
 
+	var codeNamespace = model.CodeElements.OfType<CodeNamespace>().FirstOrDefault();
+
+	var codeClass = codeNamespace.Children.OfType<CodeClass>().FirstOrDefault();
+
+	this.WriteLine("CREATE TABLE {0} (", codeClass.Name);
+	
+	foreach (var property in codeClass.Children.OfType<CodeProperty>().ToList())
+    {
+		this.WriteLine("  {0} {1},", property.Name, this.ConvertDataType(property.Type.AsString));
+    }
+
+	this.WriteLine(")");
+#>
+
+<#+ 
+public ProjectItem GetTemplateItem(IEnumerable<ProjectItem> items, string name)
+{
+	return items.FirstOrDefault(d => d.Properties.Item("FullPath").Value.ToString().EndsWith(name));
+}
+
+public string ConvertDataType(string datatype)
+{
+	if (datatype == "string")
+		return "nvarchar(75)";
+
+	return datatype;
+}
 #>

@@ -1,7 +1,7 @@
 ﻿ 
 
 CREATE TABLE UseClassForGeneration (
-  Property string,
+  Property nvarchar(75),
   Length int,
 )
 

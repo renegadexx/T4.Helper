@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>T4.Samples</id>
+    <version>1.0.0</version>
+    <authors>Rene Leupold</authors>
+    <owners>Rene Leupold</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>
+	Samples for T4.TemplateFileManager and T4.VsAutomationHelper
+	Please report bugs or feature requests on github: https://github.com/renegadexx/T4.Helper/issues.
+    </description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright 2012-2015</copyright>
+    <tags>T4 CodeGeneration C# TemplateFileManager VsAutomationHelper samples dsl</tags>
+    <dependencies>
+   	<dependency id="T4.TemplateFileManager" version="2.2.1" />
+	<dependency id="T4.VsAutomationHelper" version="1.0.0" />
+    </dependencies>
+  </metadata>
+</package>

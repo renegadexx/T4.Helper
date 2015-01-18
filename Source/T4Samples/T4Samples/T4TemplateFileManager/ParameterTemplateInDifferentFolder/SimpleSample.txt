@@ -1,5 +1,7 @@
 ﻿
 
+// Note: You can use only one T4.TemplateFileManager per T4 Template!
+
 // <summary file="$filename$" company="...">
 // some text...
 // </summary>

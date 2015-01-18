@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace T4Samples.T4VsAutomationHelper.FileCodeModel
 {
-    class UseClassForGeneration
+    public class UseClassForGeneration
     {
+        public string Property { get; set; }
+        public int Length { get; set; }
     }
 }

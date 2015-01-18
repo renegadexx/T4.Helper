@@ -1,0 +1,67 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ output extension=".txt" #>
+<#@ Assembly Name="System.Core" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="Microsoft.VisualStudio.TextTemplating" #>
+<#@ include file="$(SolutionDir)\Packages\T4.VsAutomationHelper.1.0.0\tools\ttinc\VsAutomationHelper.CS.ttinclude" #>
+<#@ include file="$(SolutionDir)\Packages\T4.TemplateFileManager.2.2.1\tools\ttinc\TemplateFilemanager.CS.ttinclude" #>
+<#
+string[] cultureKeyArray = new string[] {"en", "de", "fr", "it"};
+var fm = TemplateFileManager.Create(this);
+fm.CanOverwriteExistingFile = true; // default is false;
+
+var fp = new FileProperties();
+fp.BuildAction = BuildAction.Compile;
+fp.CustomTool = "ResXFileCodeGenerator";
+
+var paramTmpl = ParamTextTemplate.Create(this.Host); 
+var session = ParamTextTemplate.GetSessionObject();	 
+
+for (int idx = 0; idx < cultureKeyArray.Length; idx++)
+{
+	string key = cultureKeyArray[idx];
+	var resource = this.GetResourceListWithKey(key);
+
+	session["Document"] = resource;
+	var fileName = "Resource" + this.GetResourceExtension(key);
+
+	// Enable strong typed resource
+	if (fileName == "Resource.resx")  // sets the custom tool for infrastructure
+		fm.StartNewFile(fileName, fileProperties: fp);
+	else 
+		fm.StartNewFile(fileName);
+
+	var output = paramTmpl.TransformText("ResourceTemplate.tt", session).Trim();
+	this.Write(output);
+}
+
+fm.Process(true);
+
+//// Alternative with VsAutomationHelper Enable strong typed resource
+//// this.dteHelper.SetCustomToolForGeneratedItem("Resource.resx", "ResXFileCodeGenerator");
+#>
+<#+ 
+private string GetResourceExtension(string cultureKey)
+{
+	if (cultureKey.ToLower() == "en")  
+		return ".resx";
+	
+	return String.Format(".{0}.resx", cultureKey.ToLower());
+}
+
+public List<string[]> GetResourceListWithKey(string cultureKey)
+{
+	return new List<string[]>() 
+			   { 
+					new string[]
+					{
+						"Name " + cultureKey,
+						"Content " + cultureKey,
+						"Comment " + cultureKey
+					}
+				};
+}
+#>

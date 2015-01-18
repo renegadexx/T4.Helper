@@ -1,0 +1,19 @@
+﻿<#@ template  debug="true" hostSpecific="true" #>
+<#@ output extension=".cs" #>
+<#@ Assembly Name="System.Core" #>
+<#@ import namespace="System" #>
+<#@ assembly name="EnvDTE80" #>
+<#@ import namespace="EnvDTE" #>
+<#@ import namespace="EnvDTE80" #>
+<#@ include file="$(SolutionDir)\Packages\T4.VsAutomationHelper.1.0.0\tools\ttinc\VsAutomationHelper.CS.ttinclude" #>
+
+<#
+	string projectName = "dnug-bern.ch";
+	var vs = this.dteHelper.Dte;
+
+	Solution2 sln = (Solution2)vs.Solution;
+	
+	string templatePath = sln.GetProjectTemplate("ClassLibrary.zip", "CSharp");
+	string path = Path.Combine(Path.GetDirectoryName(vs.Solution.FullName), projectName);
+	sln.AddFromTemplate(templatePath, path, projectName, false);
+#>

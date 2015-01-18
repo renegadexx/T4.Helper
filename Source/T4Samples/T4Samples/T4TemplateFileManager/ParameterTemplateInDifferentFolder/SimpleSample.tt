@@ -1,7 +1,9 @@
 ﻿<#@ template debug="false" hostspecific="true" language="C#" #>
 <#@ assembly name="System.Core" #>
-<#@ include file="$(SolutionDir)\Packages\T4.TemplateFileManager.2.2.0\tools\ttinc\TemplateFilemanager.CS.ttinclude" #>
+<#@ include file="$(SolutionDir)\Packages\T4.TemplateFileManager.2.2.1\tools\ttinc\TemplateFilemanager.CS.ttinclude" #>
 <#@ output extension=".txt" #>
+
+// Note: You can use only one T4.TemplateFileManager per T4 Template!
 
 <# 
 // Recommended editor: Tangible T4 Editor (http://t4-editor.tangible-engineering.com/Download_T4Editor_Plus_ModelingTools.html)
@@ -31,7 +33,8 @@ var session = ParamTextTemplate.GetSessionObject();
 
 foreach (Test item in data)
 {
-	fileManager.StartNewFile(item.ClassName + ".cs", folderName:"TestFolder/Sub", fileProperties:fileProperties);
+	// use projectName to generate output in a different visual studio project
+	fileManager.StartNewFile(item.ClassName + ".cs", /* projectName:"OtherProject", */ folderName:"TestFolder/Sub", fileProperties:fileProperties);
 	session["ClassMetaData"] = item;
 	string output = paramTmpl.TransformText("SimpleParameterTemplate.tt", session);
 	this.Write(output);

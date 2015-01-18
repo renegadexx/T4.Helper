@@ -1,21 +1,8 @@
-﻿<#@ template debug="false" hostspecific="false" language="C#" #>
-<#@ output extension=".txt" #>
-<#@ assembly name="C:\tt\ExcelHelper.dll" #>
-<#@ parameter name="Document" type="ExcelHelper.ResourceDocument" #>
-<#@ parameter name="CultureKey" type="System.String" #>
-<# 
-// Woraround for parameter
-// ExcelHelper.ResourceDocument Document;
-if (Document == null)
-{
-	throw new ArgumentNullException("Document", "The processing of the Template was aborted."); 
-}
-
-if (String.IsNullOrEmpty(CultureKey))
-{
-	throw new ArgumentNullException("CultureKey", "The processing of the Template was aborted. The key was not set to en, de, fr or it."); 
-}
-#>
+﻿<#@ assembly name="Microsoft.CSharp" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #> 
+<#@ parameter name="Document" type="System.Collections.Generic.List<System.String[]>" #>
 <?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
@@ -57,27 +44,14 @@ if (String.IsNullOrEmpty(CultureKey))
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-<# foreach (ExcelHelper.Table item in Document.Table)
-{#>
-	<data name="<#= item.ResourceName #>" xml:space="preserve">
-    <value><#= GetContentForCultureKey(CultureKey, item) #></value>
-    <comment></comment>
+<# 
+for (int idx = 0; idx < Document.Count; idx++)
+{
+	var item = Document[idx];
+#>
+	<data name="<#= item[0] #>" xml:space="preserve">
+    <value><#= item[1] #></value>
+    <comment><#= item[2] #></comment>
   </data>	 
 <#} #>
 </root>
-<#+  
-private string GetContentForCultureKey(string cultureKey, ExcelHelper.Table item)
-{
-	switch (cultureKey.ToLower())
-	{
-		case "de":
-			return item.Language.De;
-		case "fr":
-			return item.Language.Fr;
-		case "it":
-			return item.Language.It;
-		default:
-			return item.Language.En;
-	}
-}
-#>

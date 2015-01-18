@@ -40,56 +40,130 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="T4TemplateFileManager\ParameterTemplate\ParameterTemplateXml.cs">
+      <DependentUpon>ParameterTemplateXml.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="T4TemplateFileManager\ParameterTemplate\ParameterTemplate.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ParameterTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Include="T4VsAutomationHelper\CreateVisualStudioProject\CreateVsProject.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CreateVsProject.tt</DependentUpon>
+    </Compile>
+    <Compile Include="T4VsAutomationHelper\FileCodeModelRestructureClass\SampleClasses\Address.cs" />
+    <Compile Include="T4VsAutomationHelper\FileCodeModelRestructureClass\SampleClasses\backup\Address.cs" />
+    <Compile Include="T4VsAutomationHelper\FileCodeModelRestructureClass\SampleClasses\backup\Order.cs" />
+    <Compile Include="T4VsAutomationHelper\FileCodeModelRestructureClass\SampleClasses\backup\OrderItem.cs" />
+    <Compile Include="T4VsAutomationHelper\FileCodeModelRestructureClass\SampleClasses\Order.cs" />
+    <Compile Include="T4VsAutomationHelper\FileCodeModelRestructureClass\SampleClasses\OrderItem.cs" />
+    <Compile Include="T4VsAutomationHelper\FileCodeModel\UseClassForGeneration.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="TestFolder\Sub\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="T4TemplateFileManager\SimpleParameterTemplate.tt">
+    <None Include="T4TemplateFileManager\ParameterTemplateInDifferentFolder\SimpleParameterTemplate.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>SimpleParameterTemplate.txt</LastGenOutput>
     </None>
-    <None Include="T4TemplateFileManager\SimpleSample.tt">
+    <None Include="T4TemplateFileManager\ParameterTemplateInDifferentFolder\SimpleSample.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>SimpleSample.txt</LastGenOutput>
     </None>
-    <None Include="T4VsAutomationHelper\01_template.tt">
+    <None Include="T4TemplateFileManager\ParameterTemplateUsingCustomTool\Resource.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Resource.txt</LastGenOutput>
+    </None>
+    <None Include="T4TemplateFileManager\ParameterTemplateUsingCustomTool\ResourceTemplate.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ResourceTemplate.cs</LastGenOutput>
+    </None>
+    <None Include="T4TemplateFileManager\ParameterTemplate\ParameterTemplateXml.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ParameterTemplateXml.cs</LastGenOutput>
+    </None>
+    <None Include="T4TemplateFileManager\ParameterTemplate\ParameterTemplate.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ParameterTemplate.cs</LastGenOutput>
+    </None>
+    <None Include="T4TemplateFileManager\ParameterTemplate\MasterTemplate.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>MasterTemplate.txt</LastGenOutput>
+    </None>
+    <None Include="T4VsAutomationHelper\CreateVisualStudioProject\CreateVsProject.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>CreateVsProject.cs</LastGenOutput>
+    </None>
+    <None Include="T4VsAutomationHelper\FileCodeModelRestructureClass\EquatableObjectHelper.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>EquatableObjectHelper.txt</LastGenOutput>
+    </None>
+    <None Include="T4VsAutomationHelper\FileCodeModel\ReadFromClassWithFileCodeModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ReadFromClassWithFileCodeModel.txt</LastGenOutput>
+    </None>
+    <None Include="T4VsAutomationHelper\MultipleTemplatesExecutionOrder\01_template.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>01_template1.txt</LastGenOutput>
     </None>
-    <None Include="T4VsAutomationHelper\02_template.tt">
+    <None Include="T4VsAutomationHelper\MultipleTemplatesExecutionOrder\02_template.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>02_template1.txt</LastGenOutput>
     </None>
-    <None Include="T4VsAutomationHelper\Master.ExecutionOrder.EnvDte.tt">
+    <None Include="T4VsAutomationHelper\MultipleTemplatesExecutionOrder\Master.ExecutionOrder.EnvDte.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Master.ExecutionOrder.EnvDte1.txt</LastGenOutput>
     </None>
-    <None Include="T4VsAutomationHelper\VsAutomationHelper.CS.ttinclude" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="T4TemplateFileManager\SimpleParameterTemplate.txt">
+    <Content Include="T4TemplateFileManager\ParameterTemplate\MasterTemplate.txt">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MasterTemplate.tt</DependentUpon>
+    </Content>
+    <Content Include="T4TemplateFileManager\ParameterTemplate\Person.html">
+      <DependentUpon>MasterTemplate.tt</DependentUpon>
+    </Content>
+    <Content Include="T4TemplateFileManager\ParameterTemplate\Person.xml">
+      <DependentUpon>MasterTemplate.tt</DependentUpon>
+    </Content>
+    <Content Include="T4TemplateFileManager\ParameterTemplateInDifferentFolder\SimpleParameterTemplate.txt">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SimpleParameterTemplate.tt</DependentUpon>
     </Content>
-    <Content Include="T4TemplateFileManager\SimpleSample.txt">
+    <Content Include="T4TemplateFileManager\ParameterTemplateInDifferentFolder\SimpleSample.txt">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SimpleSample.tt</DependentUpon>
     </Content>
-    <Content Include="T4VsAutomationHelper\01_template1.txt">
+    <Content Include="T4VsAutomationHelper\FileCodeModelRestructureClass\EquatableObjectHelper.txt">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EquatableObjectHelper.tt</DependentUpon>
+    </Content>
+    <Content Include="T4VsAutomationHelper\FileCodeModel\ReadFromClassWithFileCodeModel.txt">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ReadFromClassWithFileCodeModel.tt</DependentUpon>
+    </Content>
+    <Content Include="T4VsAutomationHelper\MultipleTemplatesExecutionOrder\01_template1.txt">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>01_template.tt</DependentUpon>
     </Content>
-    <Content Include="T4VsAutomationHelper\02_template1.txt">
+    <Content Include="T4VsAutomationHelper\MultipleTemplatesExecutionOrder\02_template1.txt">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>02_template.tt</DependentUpon>
     </Content>
-    <Content Include="T4VsAutomationHelper\Master.ExecutionOrder.EnvDte1.txt">
+    <Content Include="T4VsAutomationHelper\MultipleTemplatesExecutionOrder\Master.ExecutionOrder.EnvDte1.txt">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Master.ExecutionOrder.EnvDte.tt</DependentUpon>

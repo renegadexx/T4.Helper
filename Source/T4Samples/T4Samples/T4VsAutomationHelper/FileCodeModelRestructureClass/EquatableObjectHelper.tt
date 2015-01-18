@@ -1,6 +1,5 @@
 ﻿2<#@ template  debug="true" hostSpecific="true" #>
-<#@ output extension=".cs" #>
-<#@ assembly name="EnvDTE80.dll" #>
+<#@ output extension=".txt" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.IO" #>
 <#@ import namespace="System.Diagnostics" #>
@@ -9,45 +8,52 @@
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="EnvDTE" #>
 <#@ import namespace="EnvDTE80" #>
-<#@ include file="VsAutomationHelper.CS.ttinclude" #>
-<#@ include file="EF.Utility.CS.ttinclude" #>
+<#@ include file="$(SolutionDir)\Packages\T4.VsAutomationHelper.1.0.0\tools\ttinc\VsAutomationHelper.CS.ttinclude" #>
+<#@ include file="$(SolutionDir)\Packages\T4.TemplateFileManager.2.2.1\tools\ttinc\TemplateFilemanager.CS.ttinclude" #>
 <#
-EnvDTE.DTE dte =  dteHelper.GetHostServiceProvider();
-EntityFrameworkTemplateFileManager fm = EntityFrameworkTemplateFileManager.Create(this);
+
+// Before you start, show the content of classes in folder SampleClasses
+
+EnvDTE.DTE dte =  this.dteHelper.Dte;
+
+var fm = TemplateFileManager.Create(this);
 fm.StartHeader();
-this.WriteLine("/// meine kopfzeile für alle klassen");
+this.WriteLine("/// Header for classes");
 fm.EndBlock();
 
+EnvDTE.Project project = dte.Solution.Projects.Item(1);
+
+var items = this.dteHelper.GetAllProjectItems();
 
 
+ProjectItem item = this.GetProjectItem(items, "SampleClasses");
 
-EnvDTE.Project project = dte.Solution.Item(2);
-
-ProjectItem item =  (from ProjectItem it in project.ProjectItems.Cast<ProjectItem>()
-						from ProjectItem si in it.ProjectItems.Cast<ProjectItem>()
-								where si.Name == "SampleClasses"
-							select si).First();
-								
 List<ProjectItem> projectItems = item.ProjectItems.Cast<ProjectItem>().ToList();
-								
 foreach (ProjectItem projectItem in projectItems)
 {
 	EnvDTE.FileCodeModel model = projectItem.FileCodeModel;
+	if (model == null) continue;
+
 	CodeElements elements = model.CodeElements;
-		
+
 	CodeClass classObject = (from CodeElement ns in elements.OfType<EnvDTE.CodeNamespace>()
 							from CodeElement cls in ns.Children.OfType<CodeClass>()
 							select cls).FirstOrDefault() as CodeClass;
 	if (classObject == null) continue;
-	
+
 	fm.StartNewFile(String.Format("{0}.Equatable.cs", classObject.Name));
 	this.GeneratePartialCodeClass(classObject);
-}						
+}
 
 fm.Process(true);
 #>
 
-<#+ 
+<#+
+public ProjectItem GetProjectItem(IEnumerable<ProjectItem> items, string name)
+{
+	return items.FirstOrDefault(d => d.Name == name);
+}
+
 private void GeneratePartialCodeClass(CodeClass element)
 { 
 	EnvDTE80.CodeClass2 cls = element as CodeClass2;

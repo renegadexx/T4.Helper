@@ -1062,7 +1062,17 @@ public class VSHelper
 		if (item.Properties == null)
 			return null;
 
-		return item.Properties.Item("FullPath").Value.ToString();
+		string fullPath;
+		try
+		{
+			fullPath = item.Properties.Item("FullPath").Value.ToString();
+		}
+		catch
+		{
+			return null;
+		}		
+
+		return fullPath;		
 	}
 
 	public static IEnumerable<EnvDTE.ProjectItem> GetAllSolutionItems(EnvDTE.DTE dte)

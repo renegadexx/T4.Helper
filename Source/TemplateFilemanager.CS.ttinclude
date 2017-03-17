@@ -1061,7 +1061,9 @@ public class VSHelper
 		if (item == null)
 			return null;
 
-		if (item.Properties == null)
+		if (item.Properties == null 
+      || item.Properties.Item("FullPath") == null
+      || item.Properties.Item("FullPath").Value == null)
 			return null;
 
 		return item.Properties.Item("FullPath").Value.ToString();

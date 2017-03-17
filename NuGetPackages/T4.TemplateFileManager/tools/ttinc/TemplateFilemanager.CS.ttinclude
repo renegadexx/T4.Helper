@@ -39,6 +39,8 @@
 The TemplateFileManager is based on EntityFrameworkTemplateFileManager (EFTFM) from MS.
 
 Differences to EFTFM
+Version 3.0
+-  Sync-Action call changed (Issue 10)
 Version 2.2.1
 - added Namespace to ParameterTemplate Engine in GetTemplateContent (better Compatibility with Solution2 (EnvDte80))
 - sample templates removed from nuget-package, use nuget package t4.samples instead
@@ -269,7 +271,7 @@ public class TemplateFileManager
             }
         }
 
-		projectSyncAction.EndInvoke(projectSyncAction.BeginInvoke(list, null, null));
+		projectSyncAction(list);
 		this.CleanUpTemplatePlaceholders();
 		var items = VSHelper.GetOutputFilesAsProjectItems(this.dte, list);
 		this.WriteVsProperties(items, list);

@@ -1021,32 +1021,39 @@ public class VSHelper
 		return item;
 	}
 
-	public static EnvDTE.Project GetProject(EnvDTE.DTE dte, string projectName)
-	{
-		return GetAllProjects(dte).Where(p=>p.Name == projectName).First();
-	}
-
 	public static IEnumerable<EnvDTE.Project> GetAllProjects(EnvDTE.DTE dte)
 	{
 		List<EnvDTE.Project> projectList = new List<EnvDTE.Project>();
 
-		var folders = dte.Solution.Projects.Cast<EnvDTE.Project>().Where(p=>p.Kind == EnvDTE80.ProjectKinds.vsProjectKindSolutionFolder);
+		var projects = dte.Solution.Projects.Cast<EnvDTE.Project>();
 
-		foreach (EnvDTE.Project folder in folders)
-		{
-			if (folder.ProjectItems == null) continue;
-
-			foreach (EnvDTE.ProjectItem item in folder.ProjectItems)
-			{
-				if (item.Object is EnvDTE.Project)
-					projectList.Add(item.Object as EnvDTE.Project);
+		foreach (var proj in projects) {
+			string pname = proj.Name;			
+			if (proj.Kind == EnvDTE80.ProjectKinds.vsProjectKindSolutionFolder) {
+				projectList.AddRange(GetAllProjectsForFolder(proj));			
+			} else {
+				projectList.Add(proj);
 			}
 		}
 
-		var projects = dte.Solution.Projects.Cast<EnvDTE.Project>().Where(p=>p.Kind != EnvDTE80.ProjectKinds.vsProjectKindSolutionFolder);
+		return projectList;
+	}
 
-		if (projects.Count() > 0)
-			projectList.AddRange(projects);
+	private static List<EnvDTE.Project> GetAllProjectsForFolder(EnvDTE.Project proj) {
+		List<EnvDTE.Project> projectList = new List<EnvDTE.Project>();
+		
+		foreach (EnvDTE.ProjectItem item in proj.ProjectItems) {
+			string pname = item.Name;	
+			if (item.Object is EnvDTE.Project) {
+				EnvDTE.Project p = item.Object as EnvDTE.Project;
+
+				if (p.Kind == EnvDTE80.ProjectKinds.vsProjectKindSolutionFolder) {
+					projectList.AddRange(GetAllProjectsForFolder(p));
+				} else {
+					projectList.Add(p);
+				}
+			}
+		}
 
 		return projectList;
 	}

@@ -156,7 +156,7 @@ public class DteHelper
 		if (hostServiceProvider != null)
 		{
 			dte = hostServiceProvider.
-				GetService(typeof(EnvDTE.DTE)) as EnvDTE.DTE;
+				GetCOMService(typeof(EnvDTE.DTE)) as EnvDTE.DTE;
 		}
 
 		return dte;
